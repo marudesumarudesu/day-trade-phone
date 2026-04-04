@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スマホ版 まる流デイトレ術 2026 完全攻略ポータル</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; }
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .group:hover .group-hover\:rotate-y-180 { transform: rotateY(180deg); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo, useEffect, useRef } = React;
+
+    // ==========================================
+    // アイコンコンポーネント (クラッシュ防止用)
+    // ==========================================
+    function Icon({ name, className }) {
+      const ref = useRef(null);
+      
+      useEffect(() => {
+        if (ref.current && window.lucide) {
+          ref.current.innerHTML = `<i data-lucide="${name}" class="${className || ''}"></i>`;
+          window.lucide.createIcons({ root: ref.current });
+        }
+      }, [name, className]);
+
+      return <span ref={ref} className="contents"></span>;
+    }
+
+    // ==========================================
+    // メインコンポーネント
+    // ==========================================
+    function App() {
+      const [activeTab, setActiveTab] = useState('home');
+
+      const navItems = [
+        { id: 'home', icon: 'smartphone', label: 'ホーム (要約・スライド)' },
+        { id: 'media', icon: 'play-circle', label: '音声＆動画解説' },
+        { id: 'flashcards', icon: 'layers', label: 'フラッシュカード' },
+        { id: 'quiz', icon: 'check-square', label: '理解度クイズ' },
+        { id: 'simulator', icon: 'calculator', label: '期待値シミュレータ' },
+      ];
+
+      return (
+        <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-800">
+          
+          {/* サイドバー */}
+          <aside className="w-72 bg-white border-r border-slate-200 shadow-sm flex flex-col h-full z-10 hidden md:flex">
+            <div className="p-6 border-b border-slate-100">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-md">
+                  <Icon name="smartphone" className="w-6 h-6" />
+                </div>
+                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-teal-500">
+                  YDK Learning
+                </h1>
+              </div>
+              <p className="text-xs text-slate-500 font-medium">スマホ版デイトレ完全攻略ポータル</p>
+            </div>
+            
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+              <div className="text-xs font-bold text-slate-400 mb-4 px-3 uppercase tracking-wider">コンテンツ</div>
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${
+                    activeTab === item.id 
+                      ? 'bg-teal-50 text-teal-700 shadow-sm' 
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <div className={`${activeTab === item.id ? 'text-teal-600' : 'text-slate-400'}`}>
+                    <Icon name={item.icon} className="w-5 h-5" />
+                  </div>
+                  {item.label}
+                  {activeTab === item.id && <Icon name="chevron-right" className="w-4 h-4 ml-auto opacity-50" />}
+                </button>
+              ))}
+            </nav>
+            <div className="p-4 border-t border-slate-100">
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                <p className="text-xs font-bold text-slate-700 mb-1">講師: まる@投資とAIの先生</p>
+                <p className="text-xs text-slate-500 leading-relaxed">AIエンジニア兼FP。総資産200万から1300万へ。日本個別株特化。</p>
+              </div>
+            </div>
+          </aside>
+
+          {/* メインコンテンツ */}
+          <main className="flex-1 h-full overflow-y-auto scroll-smooth relative">
+            <div className="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-md bg-teal-600 flex items-center justify-center text-white">
+                  <Icon name="smartphone" className="w-4 h-4" />
+                </div>
+                <h1 className="font-bold text-teal-900">YDK Learning</h1>
+              </div>
+              <select 
+                className="bg-slate-100 border-none rounded-lg text-sm font-medium text-slate-700 py-2 px-3 focus:ring-2 focus:ring-teal-500"
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+              >
+                {navItems.map(item => (
+                  <option key={item.id} value={item.id}>{item.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="max-w-5xl mx-auto p-6 md:p-10 pb-20">
+              {activeTab === 'home' && <HomeView />}
+              {activeTab === 'media' && <MediaView />}
+              {activeTab === 'flashcards' && <FlashcardsView />}
+              {activeTab === 'quiz' && <QuizView />}
+              {activeTab === 'simulator' && <SimulatorView />}
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 1. ホームビュー
+    // ==========================================
+    function HomeView() {
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="bg-gradient-to-br from-teal-900 via-teal-800 to-teal-600 rounded-2xl p-8 md:p-12 text-white shadow-xl mb-10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+              <Icon name="smartphone" className="w-[300px] h-[300px]" />
+            </div>
+            <div className="relative z-10">
+              <div className="inline-block px-3 py-1 bg-teal-400/30 backdrop-blur-sm rounded-full text-xs font-bold tracking-widest text-teal-100 mb-4 uppercase">
+                Official Course Material
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                スマホ版 まる流デイトレ術 2026
+              </h1>
+              <p className="text-teal-100 text-lg md:text-xl max-w-2xl font-light">
+                PCに勝てない情報量を「規律」でカバーする。感情を排除し、確率と計算で利益を組み上げる「最強のコツコツトレード」。
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <section>
+                <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <Icon name="shield-check" className="text-teal-600 w-6 h-6" /> 成功のピラミッド（最重要概念）
+                </h2>
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                  <div className="flex gap-4 items-start mb-6 pb-6 border-b border-slate-100">
+                    <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0 text-teal-600">
+                      <Icon name="alert-circle" className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-800 mb-2">順番を逆にした者は必ず負ける</h3>
+                      <p className="text-slate-600 leading-relaxed text-sm">
+                        初心者は「勝率を上げる方法（手法）」から探します。しかし、プロは「期待値の土台」から作り、「ルールを守る規律」を身につけ、最後に「勝率」を上乗せします。この順番を絶対に守ってください。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {[
+                      { title: "【土台】期待値をプラスにする", desc: "エントリー前に必ず「利確幅 ＞ 損切幅」のルールを設定し、見えないコストを吸収できる数学的優位性を作る。" },
+                      { title: "【骨組み】ルールを厳守する", desc: "スマホの「手軽に注文変更できる」という罠に打ち勝つ。感情で損切りを遅らせた瞬間に期待値は崩壊する。" },
+                      { title: "【装飾】勝率を上げる4つの技術", desc: "日経平均との連動性、板の壁、ローソク足のヒゲ、出来高の増減を使って、エントリーの精度を高める。" }
+                    ].map((rule, idx) => (
+                      <div key={idx} className="flex gap-3">
+                        <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                          {idx + 1}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-800">{rule.title}</p>
+                          <p className="text-slate-600 text-sm">{rule.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* スライドPDF埋め込み */}
+              <section>
+                <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <Icon name="file-text" className="text-teal-600 w-6 h-6" /> 講義スライド資料
+                </h2>
+                <div className="bg-slate-800 rounded-xl p-4 text-white shadow-lg overflow-hidden border border-slate-700">
+                  <div className="flex justify-between items-center mb-4 px-2">
+                    <div className="flex items-center gap-2">
+                      <Icon name="file-text" className="text-teal-400 w-5 h-5" />
+                      <span className="font-bold">【スマホ版禁断のデイトレ術】スライド.pdf</span>
+                    </div>
+                    <a href="./【スマホ版禁断のデイトレ術】スライド.pdf" download className="bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded flex items-center gap-2 transition-colors">
+                      <Icon name="download" className="w-4 h-4" /> ダウンロード
+                    </a>
+                  </div>
+                  <div className="w-full aspect-[4/3] bg-slate-200 rounded-lg overflow-hidden flex items-center justify-center relative">
+                    <iframe 
+                      src="./【スマホ版禁断のデイトレ術】スライド.pdf" 
+                      className="w-full h-full border-none"
+                      title="講義スライド"
+                    >
+                      <p className="text-slate-500">※実際の環境ではここにPDFが表示されます。</p>
+                    </iframe>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                   <Icon name="crosshair" className="text-teal-500 w-5 h-5" /> スマホ特化の戦術
+                </h3>
+                <ul className="space-y-4 text-sm text-slate-600">
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 flex-shrink-0"></div> 
+                    <div><strong>監視銘柄を2〜3に固定する</strong><br/><span className="text-xs text-slate-400">画面が小さいため、広く浅く探すのは不利。固定銘柄の「クセ」を掴む。</span></div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 flex-shrink-0"></div> 
+                    <div><strong>通知は最大の敵</strong><br/><span className="text-xs text-slate-400">LINEなどの通知が一瞬の判断を鈍らせる。集中できる環境を作る。</span></div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 flex-shrink-0"></div> 
+                    <div><strong>翌日に持ち越さない</strong><br/><span className="text-xs text-slate-400">その日のうちに決済（日計り）し、海外市場などの予測不能なリスクを完全に回避する。</span></div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 2. メディアビュー
+    // ==========================================
+    function MediaView() {
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">マルチメディア学習</h2>
+            <p className="text-slate-500">スマホトレードの極意を、動画と音声でいつでもどこでもインプット。</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 flex flex-col">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                  <Icon name="monitor-play" className="w-8 h-8" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Video Tutorial</div>
+                  <h3 className="text-xl font-bold text-slate-800 break-all">【スマホ版禁断のデイトレ術】動画.mp4</h3>
+                </div>
+              </div>
+              <p className="text-slate-600 text-sm mb-6 flex-1">
+                スライド資料に沿って、期待値の考え方からスマホ特有の罠、勝率を上げる4つの視点までを網羅的に解説した動画教材です。
+              </p>
+              <div className="bg-slate-900 rounded-xl overflow-hidden shadow-inner w-full aspect-video">
+                <video controls className="w-full h-full object-cover" src="./【スマホ版禁断のデイトレ術】動画.mp4">
+                  お使いのブラウザは動画再生をサポートしていません。
+                </video>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 flex flex-col">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                  <Icon name="file-audio" className="w-8 h-8" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Podcast</div>
+                  <h3 className="text-xl font-bold text-slate-800 break-all">【スマホ版禁断のデイトレ術】ポッドキャスト.m4a</h3>
+                </div>
+              </div>
+              <p className="text-slate-600 text-sm mb-6 flex-1">
+                AIが講義内容をラジオ番組風に解説。なぜスマホトレードでは「規律」がPC以上に求められるのか？通勤時間などのインプットに最適です。
+              </p>
+              <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 flex flex-col items-center justify-center h-auto aspect-video">
+                <Icon name="headphones" className="text-slate-300 mb-6 w-12 h-12" />
+                <audio controls className="w-full" src="./【スマホ版禁断のデイトレ術】ポッドキャスト.m4a">
+                  お使いのブラウザは音声再生をサポートしていません。
+                </audio>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 3. フラッシュカードビュー
+    // ==========================================
+    function FlashcardsView() {
+      const cards = [
+        { front: "期待値の公式", back: "【勝率 × 平均利益 － 負率 × 平均損失】\nトレードはこの数値がプラスになるように設計することがすべての土台となる。" },
+        { front: "見えないコスト", back: "手数料、スプレッド（買値と売値の差）、スリッページ（ズレ）のこと。細かく売買するスマホトレードでは、最初からこれらを吸収できる「利大損小」の設定が必須。" },
+        { front: "スマホトレード\n最大の敵", back: "「手軽に注文変更できる」という罠。\n感情で損切りを遅らせると、期待値の数学的設計が崩壊する。" },
+        { front: "勝率を上げる視点①\n日経平均", back: "全体（日経平均）が下がっているのに、個別銘柄が上がっている「強さ（歪み）」を見つけ、いずれ連れ安するタイミングを狙う（鞘取り）。" },
+        { front: "勝率を上げる視点②\n板とチャート", back: "板の「厚い壁」や過去の「高値・安値」を節目として見る。またローソク足のヒゲから、市場の反発心理を直感的に読み取る。" },
+        { front: "勝率を上げる視点③\n出来高", back: "値動きにどれだけ人が集まっているか。出来高が伴わない値動きは「だまし」の可能性が高く、出来高増はトレンドの裏付けとなる。" }
+      ];
+
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-800 mb-2">重要概念フラッシュカード</h2>
+              <p className="text-slate-500">スマホトレードで生き残るための必須知識。カードをホバー（タップ）して確認。</p>
+            </div>
+            <div className="bg-teal-50 text-teal-700 text-sm font-bold px-4 py-2 rounded-lg border border-teal-100 inline-flex items-center gap-2">
+              <Icon name="layers" className="w-4 h-4" /> 全{cards.length}枚
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cards.map((card, idx) => (
+              <div key={idx} className="group perspective-1000 w-full h-56 cursor-pointer">
+                <div className="relative w-full h-full transition-transform duration-700 transform-style-3d group-hover:rotate-y-180">
+                  <div className="absolute inset-0 backface-hidden bg-white border-2 border-slate-200 rounded-2xl flex flex-col items-center justify-center p-6 shadow-sm group-hover:shadow-md transition-shadow">
+                    <span className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Concept</span>
+                    <h3 className="text-xl font-bold text-teal-900 text-center whitespace-pre-line">{card.front}</h3>
+                  </div>
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-teal-900 to-teal-700 text-white rounded-2xl flex flex-col items-center justify-center p-6 shadow-xl">
+                    <span className="text-teal-300 text-xs font-bold uppercase tracking-widest mb-3">Answer</span>
+                    <p className="text-center text-sm leading-relaxed font-medium whitespace-pre-line">{card.back}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 4. クイズビュー
+    // ==========================================
+    function QuizView() {
+      const questions = [
+        {
+          q: "スマホ版まる流デイトレ術において、「成功のピラミッド」の一番土台（最初にすべきこと）はどれか？",
+          options: ["日経平均や板を読んで勝率を上げる", "期待値がプラスになるルール（利確＞損切）を設計する", "毎日必ずトレードをする習慣をつける", "手数料の安い証券会社を探す"],
+          answer: 1,
+          expl: "手法の順番は明確です。まず「期待値をプラスにする（利確ラインと損切ラインを決める）」ことから始めます。"
+        },
+        {
+          q: "スマホトレードで初心者が陥りやすい「最大の罠（期待値を崩壊させる行為）」はどれか？",
+          options: ["出来高の少ない銘柄を選んでしまう", "感情で注文を操作し、損切りを遅らせてしまう", "取引時間が長くなってしまう", "ローソク足のヒゲを見逃してしまう"],
+          answer: 1,
+          expl: "スマホは操作が軽いため、感情で触りやすいです。「もう少し持てば戻るかも」と損切りを遅らせた瞬間に、利大損小の設計が壊れます。"
+        },
+        {
+          q: "スマホの小さな画面でトレードする際、まる流が推奨する銘柄の監視方法は？",
+          options: ["毎日、値上がりランキング上位の数十銘柄を浅く広く監視する", "日経平均だけを見て、個別銘柄のチャートは見ない", "固定の2〜3銘柄に絞り、その銘柄の「クセ」を深く把握する", "ニュースアプリの通知が来た銘柄に飛び乗る"],
+          answer: 2,
+          expl: "スマホでは情報処理能力に限界があるため、銘柄を2〜3に固定し「どの時間に動きやすいか」「板は軽いか」といった性格を掴むことが重要です。"
+        },
+        {
+          q: "出来高（売買高）が増加している状態は、どのようなサインとして捉えるべきか？",
+          options: ["市場が混乱しているので手を出してはいけないサイン", "トレンドに勢いと裏付けがあり、信頼できるサイン", "まもなく値動きが完全に止まるサイン", "大口投資家が全員撤退したサイン"],
+          answer: 1,
+          expl: "出来高は「人の集まり」を測るメーターです。出来高が伴うトレンドは勢いと裏付けがあり、逆に出来高が少ない中での値動きは「だまし」の可能性があります。"
+        }
+      ];
+
+      const [answers, setAnswers] = useState({});
+      const [submitted, setSubmitted] = useState(false);
+      const [score, setScore] = useState(0);
+
+      const handleSelect = (qIdx, optIdx) => {
+        if (submitted) return;
+        setAnswers({ ...answers, [qIdx]: optIdx });
+      };
+
+      const handleSubmit = () => {
+        let currentScore = 0;
+        questions.forEach((q, idx) => {
+          if (answers[idx] === q.answer) currentScore++;
+        });
+        setScore(currentScore);
+        setSubmitted(true);
+      };
+
+      const resetQuiz = () => {
+        setAnswers({});
+        setSubmitted(false);
+        setScore(0);
+      };
+
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">実戦前・理解度クイズ</h2>
+            <p className="text-slate-500">感情を捨て、機械のようにルールを遂行する準備はできていますか？</p>
+          </div>
+
+          <div className="space-y-8">
+            {questions.map((q, qIdx) => (
+              <div key={qIdx} className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                <h3 className="text-lg font-bold text-slate-800 mb-6 flex gap-3">
+                  <span className="text-teal-600">Q{qIdx + 1}.</span> {q.q}
+                </h3>
+                <div className="space-y-3">
+                  {q.options.map((opt, optIdx) => {
+                    const isSelected = answers[qIdx] === optIdx;
+                    const isCorrect = q.answer === optIdx;
+                    
+                    let btnClass = "w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 font-medium text-sm md:text-base ";
+                    
+                    if (!submitted) {
+                      btnClass += isSelected 
+                        ? "border-teal-500 bg-teal-50 text-teal-800" 
+                        : "border-slate-100 bg-slate-50 text-slate-600 hover:border-teal-200 hover:bg-white";
+                    } else {
+                      if (isCorrect) {
+                        btnClass += "border-green-500 bg-green-50 text-green-800";
+                      } else if (isSelected && !isCorrect) {
+                        btnClass += "border-red-500 bg-red-50 text-red-800";
+                      } else {
+                        btnClass += "border-slate-100 bg-slate-50 text-slate-400 opacity-50";
+                      }
+                    }
+
+                    return (
+                      <button 
+                        key={optIdx} 
+                        onClick={() => handleSelect(qIdx, optIdx)}
+                        disabled={submitted}
+                        className={btnClass}
+                      >
+                        {opt}
+                        {submitted && isCorrect && <span className="float-right text-green-600 font-bold">✓ 正解</span>}
+                        {submitted && isSelected && !isCorrect && <span className="float-right text-red-600 font-bold">✗ 不正解</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+                {submitted && (
+                  <div className={`mt-4 p-4 rounded-lg text-sm ${answers[qIdx] === q.answer ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                    <strong>解説: </strong>{q.expl}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 p-6 bg-slate-100 rounded-2xl text-center">
+            {!submitted ? (
+              <button 
+                onClick={handleSubmit}
+                disabled={Object.keys(answers).length < questions.length}
+                className={`px-8 py-3 rounded-xl font-bold text-white shadow-md transition-all ${
+                  Object.keys(answers).length < questions.length 
+                    ? 'bg-slate-400 cursor-not-allowed' 
+                    : 'bg-teal-600 hover:bg-teal-500 hover:scale-105 active:scale-95'
+                }`}
+              >
+                回答を採点する
+              </button>
+            ) : (
+              <div className="animate-in zoom-in duration-500">
+                <h3 className="text-2xl font-bold mb-2">
+                  結果: {score} / {questions.length} 問正解
+                </h3>
+                {score === questions.length ? (
+                  <p className="text-green-600 font-bold mb-6 flex items-center justify-center gap-2 text-lg">
+                    🎉 完璧です！ルールを守る規律が身についています。
+                  </p>
+                ) : (
+                  <p className="text-amber-600 font-bold mb-6">
+                    「成功のピラミッド」の順番をもう一度復習しましょう。
+                  </p>
+                )}
+                <button 
+                  onClick={resetQuiz}
+                  className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold transition-colors"
+                >
+                  もう一度挑戦する
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 5. 期待値シミュレータビュー
+    // ==========================================
+    function SimulatorView() {
+      const [winRate, setWinRate] = useState(50);
+      const [profit, setProfit] = useState(5);
+      const [loss, setLoss] = useState(2);
+      const [trials, setTrials] = useState(100);
+
+      const expectedValue = (profit * (winRate / 100)) - (loss * (1 - (winRate / 100)));
+      const isProfitable = expectedValue > 0;
+
+      const chartData = useMemo(() => {
+        let seed = 1;
+        const random = () => {
+          const x = Math.sin(seed++) * 10000;
+          return x - Math.floor(x);
+        };
+
+        const numLines = 5;
+        const paths = [];
+        let minY = 0;
+        let maxY = 0;
+
+        for (let l = 0; l < numLines; l++) {
+          let current = 0;
+          const points = [{ x: 0, y: 0 }];
+          for (let i = 1; i <= trials; i++) {
+            const isWin = random() < (winRate / 100);
+            current += isWin ? Number(profit) : -Number(loss);
+            points.push({ x: i, y: current });
+            
+            if (current < minY) minY = current;
+            if (current > maxY) maxY = current;
+          }
+          paths.push(points);
+        }
+        
+        const range = Math.max(maxY - minY, 10);
+        minY -= range * 0.15;
+        maxY += range * 0.15;
+
+        if (minY > 0) minY = -range * 0.1;
+        if (maxY < 0) maxY = range * 0.1;
+
+        return { paths, minY, maxY };
+      }, [winRate, profit, loss, trials]);
+
+      const { paths, minY, maxY } = chartData;
+
+      const svgWidth = 800;
+      const svgHeight = 350;
+      const padding = { top: 20, right: 20, bottom: 30, left: 60 };
+      const innerWidth = svgWidth - padding.left - padding.right;
+      const innerHeight = svgHeight - padding.top - padding.bottom;
+
+      const scaleX = (x) => padding.left + (x / trials) * innerWidth;
+      const scaleY = (y) => padding.top + innerHeight - ((y - minY) / (maxY - minY)) * innerHeight;
+
+      const yTicks = [maxY, maxY * 0.5, 0, minY * 0.5, minY].filter((v, i, a) => a.indexOf(v) === i);
+      const xTicks = [0, Math.floor(trials / 2), trials];
+
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col h-full">
+          <div className="mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-1">期待値シミュレータ</h2>
+            <p className="text-slate-500 text-sm">勝率50%のギャンブルでも、「利幅＞損幅」なら期待値はプラスになることを視覚化します。</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+            {/* 設定パネル */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+              <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                <Icon name="sliders" className="text-teal-600 w-5 h-5" /> 設定パネル
+              </h3>
+              
+              <div className="space-y-4 flex-1">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <label className="text-xs font-bold text-slate-700">勝率 (%)</label>
+                    <span className="text-xs font-bold text-teal-600">{winRate}%</span>
+                  </div>
+                  <input 
+                    type="range" min="10" max="90" step="5" value={winRate} 
+                    onChange={(e) => setWinRate(e.target.value)}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">利確幅 (ティック)</label>
+                    <input 
+                      type="number" min="1" value={profit} 
+                      onChange={(e) => setProfit(e.target.value)}
+                      className="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 font-bold text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">損切幅 (ティック)</label>
+                    <input 
+                      type="number" min="1" value={loss} 
+                      onChange={(e) => setLoss(e.target.value)}
+                      className="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 font-bold text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <label className="text-xs font-bold text-slate-700">試行回数 (回)</label>
+                    <span className="text-xs font-bold text-teal-600">{trials}回</span>
+                  </div>
+                  <input 
+                    type="range" min="10" max="500" step="10" value={trials} 
+                    onChange={(e) => setTrials(e.target.value)}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                  />
+                </div>
+              </div>
+
+              <div className={`mt-4 p-3 rounded-xl border-2 ${isProfitable ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">1回あたりの期待値</p>
+                <div className={`text-2xl font-black ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
+                  {expectedValue > 0 ? '+' : ''}{expectedValue.toFixed(2)} <span className="text-sm font-bold">ティック</span>
+                </div>
+                <p className={`text-xs mt-1 font-medium ${isProfitable ? 'text-green-700' : 'text-red-700'}`}>
+                  {isProfitable ? 'ルールを守れば資産は増えます。' : '見えないコストに負け破産します。'}
+                </p>
+              </div>
+            </div>
+
+            {/* グラフ描画エリア */}
+            <div className="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col h-full min-h-[300px]">
+              <h3 className="font-bold text-slate-800 mb-2 text-sm">5人のトレーダーの資産推移シミュレーション</h3>
+              <div className="flex-1 relative bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
+                <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full absolute inset-0 preserve-3d">
+                  
+                  {yTicks.map((tick, i) => {
+                    const y = scaleY(tick);
+                    const isZero = Math.abs(tick) < 0.1;
+                    return (
+                      <g key={`y-${i}`}>
+                        <line 
+                          x1={padding.left} y1={y} 
+                          x2={svgWidth - padding.right} y2={y} 
+                          stroke={isZero ? "#94a3b8" : "#e2e8f0"} 
+                          strokeWidth={isZero ? "2" : "1"} 
+                          strokeDasharray={isZero ? "" : "4 4"} 
+                        />
+                        <text x={padding.left - 10} y={y + 4} textAnchor="end" fontSize="12" fill={isZero ? "#475569" : "#64748b"} fontWeight={isZero ? "bold" : "normal"}>
+                          {tick > 0 ? '+' : ''}{Math.round(tick)}
+                        </text>
+                      </g>
+                    );
+                  })}
+
+                  {xTicks.map((tick, i) => {
+                    const x = scaleX(tick);
+                    return (
+                      <g key={`x-${i}`}>
+                        <text x={x} y={svgHeight - 10} textAnchor="middle" fontSize="12" fill="#64748b">
+                          {tick}回
+                        </text>
+                      </g>
+                    );
+                  })}
+
+                  {paths.map((path, idx) => {
+                    const colors = ['#0d9488', '#8b5cf6', '#ec4899', '#f59e0b', '#3b82f6']; // Teal基調に変更
+                    const d = path.map((p, i) => `${i === 0 ? 'M' : 'L'} ${scaleX(p.x)} ${scaleY(p.y)}`).join(' '); 
+                    return (
+                      <path 
+                        key={idx} 
+                        d={d} 
+                        fill="none" 
+                        stroke={colors[idx]} 
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                        className="opacity-80 transition-all duration-300"
+                      />
+                    );
+                  })}
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
